@@ -156,9 +156,12 @@ rCASC stability scores computation allows users to evaluate which Stardust confi
 
 ```bash
 # Bash code
-# pull the container that implements the permutations of Stardust on multiple
-# permutated datasets
-docker pull giovannics/dind_rcasc
+# pull the container that implements the permutations of Stardust 
+# on multiple permutated datasets
+docker pull giovannics/spatial2020seuratpermutation
+
+# pull the container that implements the stability scores computation
+docker pull repbioinfo/seuratanalysis
 
 # prepare a dedicated directory and download the count matrix and spot positions for 
 # the Mouse Kidney dataset (as an example)
@@ -191,7 +194,6 @@ library("ggplot2")
 ```
 When your dependencies are installed you can generate the violin plots comparison image. In this way you can explore which configuration works best for your dataset.
 
-
 ```R
 # R code
 # set the variables that contain the paths for the temporary files folder of rCASC,
@@ -217,6 +219,16 @@ file=file, tissuePosition=tissuePosition, nPerm=80, permAtTime=8, percent=10, se
 ```
 Under the “MouseKidney” folder you will see the figure produced and all the data used to create it. If you want to evaluate the stability of only one configuration (that is less computationally expensive) you can switch the StartdustConfigurations method call with the following one.
 
+```bash
+# Bash code
+# pull the updated container that implements the permutations of Stardust and
+# of all the other compared methods and that also 
+# implements the stability scores computation
+docker pull giovannics/dind_rcasc
+# start R
+R
+```
+
 ```R
 # R code
 # you need to have rCASC already installed, the containers and data in your current location 
@@ -226,7 +238,7 @@ Under the “MouseKidney” folder you will see the figure produced and all the 
 library(rCASC)
 
 # set the variables that contain the paths for the temporary files folder of rCASC, 
-the count matrix and the spot positions file
+# the count matrix and the spot positions file
 scratch.folder <- paste(getwd(),"/scratch",sep="")
 file <- paste(getwd(),"/filtered_expression_matrix.txt",sep="")
 tissuePosition <- paste(getwd(),"/spot_coordinates.txt",sep="")
