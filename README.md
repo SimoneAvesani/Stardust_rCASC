@@ -19,7 +19,8 @@ Once the packages are installed, you can execute the following sample workflow b
 # Bash code
 # create a working directory and enter in it
 mkdir MouseKidney && cd MouseKidney
-# using wget download the expression matrix and spot positions of the Mouse Kidney            # dataset. Download also the full dataset for the creation of a Seurat object for 
+# using wget download the expression matrix and spot positions of the Mouse Kidney            
+# dataset. Download also the full dataset for the creation of a Seurat object for 
 # visualization purposes
 
 wget https://github.com/InfOmics/stardust/raw/validation_data/stardustData/Datasets/MouseKidney/filtered_expression_matrix.txt.zip
@@ -82,7 +83,8 @@ docker run --rm -it giovannics/stardust /bin/bash
 # create a working directory and enter in it
 mkdir MouseKidney && cd MouseKidney
 
-# Using wget, download the count matrix and spot coordinates (plus the full dataset for visualization purposes)
+# Using wget, download the count matrix and spot coordinates 
+# (plus the full dataset for visualization purposes)
 wget https://github.com/InfOmics/stardust/raw/validation_data/stardustData/Datasets/MouseKidney/FullDataset.zip
 
 wget https://github.com/InfOmics/stardust/raw/validation_data/stardustData/Datasets/MouseKidney/filtered_expression_matrix.txt.zip
@@ -199,7 +201,8 @@ file <- paste(getwd(),"/filtered_expression_matrix.txt",sep="")
 tissuePosition <- paste(getwd(),"/spot_coordinates.txt",sep="")
 
 # call the rCASC method for generation of the violin plot comparison figure.
-# It repeats the clustering permutation for 5 space configurations of Stardust (0,0.25,0.5,0.75 and 1). The parameters meaning are:
+# It repeats the clustering permutation for 5 space configurations of Stardust (0,0.25,0.5,0.75 and 1). 
+# The parameters meaning are:
 # group → to create the docker image without superuser privileges
 # scratch.folder → path of the folder that rCASC use for storing temporary files
 # file → path of the count matrix file
