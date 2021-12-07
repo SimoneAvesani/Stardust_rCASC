@@ -154,35 +154,17 @@ rCASC stability scores computation allows users to evaluate which Stardust confi
 
 ```bash
 # Bash code
-# pull the container that implement the permutations of Stardust on multiple
+# pull the container that implements the permutations of Stardust on multiple
 # permutated datasets
-docker pull giovannics/spatial2020seuratpermutation
+docker pull giovannics/dind_rcasc
 
-# pull the container that implement the stability scores computation
-docker pull repbioinfo/seuratanalysis
-
-# start R
-R
-```
-
-
-```R
-# R code
-# install out rCASC fork on GitHub through the R package devtools
-install.packages("devtools")
-library(devtools)
-install_github("InfOmics/rCASC")
-```
-When your dependencies are installed you can generate the violin plots comparison image as in Figure S1(b). In this way you can explore which configuration works best for your dataset.
-```bash
-# Bash code
 # prepare a dedicated directory and download the count matrix and spot positions for 
-# the Mouse Kidney dataset
+# the Mouse Kidney dataset (as an example)
 mkdir -p MouseKidney/scratch && cd MouseKidney
 
-wget https://github.com/GiovanniCS/StardustData/raw/main/Datasets/MouseKidney/filtered_expression_matrix.txt.zip
+wget https://github.com/InfOmics/stardust/validation_data/stardustData/Datasets/MouseKidney/filtered_expression_matrix.txt.zip
 
-wget https://raw.githubusercontent.com/GiovanniCS/StardustData/main/Datasets/MouseKidney/spot_coordinates.txt
+wget https://github.com/InfOmics/stardust/validation_data/stardustData/Datasets/MouseKidney/spot_coordinates.txt
 
 # unzip the archive and delete unused data
 unzip filtered_expression_matrix.txt.zip
@@ -195,10 +177,24 @@ R
 
 ```R
 # R code
+# install our rCASC fork on GitHub through the R package devtools
+install.packages("devtools")
+library(devtools)
+install_github("InfOmics/rCASC")
+library(rCASC)
+
 # install ggplot that is a dependency for the figure generation
 install.packages("ggplot2")
 library("ggplot2")
+```
+When your dependencies are installed you can generate the violin plots comparison image. In this way you can explore which configuration works best for your dataset.
 
+# start R
+R
+```
+
+```R
+# R code
 # set the variables that contain the paths for the temporary files folder of rCASC,
 # the count matrix and the spot positions file
 scratch.folder <- paste(getwd(),"/scratch",sep="")
@@ -220,6 +216,9 @@ StartdustConfigurations(group="docker",scratch.folder=scratch.folder,
 file=file, tissuePosition=tissuePosition, nPerm=80, permAtTime=8, percent=10, separator="\t")
 ```
 Under the “MouseKidney” folder you will see the figure produced and all the data used to create it. If you want to evaluate the stability of only one configuration (that is less computationally expensive) you can switch the StartdustConfigurations method call with the following one.
+
+# start R
+R
 ```R
 # R code
 # you need to have rCASC already installed, the containers and data in your current location of the file system as in the workflow above
@@ -232,7 +231,6 @@ scratch.folder <- paste(getwd(),"/scratch",sep="")
 file <- paste(getwd(),"/filtered_expression_matrix.txt",sep="")
 tissuePosition <- paste(getwd(),"/spot_coordinates.txt",sep="")
 
-
 # call the rCASC method to perform the permutations of a particular space
 # configuration. The parameters meaning are:
 # group → to create the docker image without superuser privileges
@@ -241,13 +239,14 @@ tissuePosition <- paste(getwd(),"/spot_coordinates.txt",sep="")
 # tissuePosition → path of the spot coordinates file
 # spaceWeight → real number between 0 and 1 that describe how much space weight if
 #               compared to the transcriptional similarity
+# res → clustering resolution 
 # nPerm → number of permutations to be computed
 # permAtTime → number of permutation to compute in parallel
 # percent → percentage of the input dataset to remove for each permutation
+# pcaDimensions → number of principal components 
 # separator → character separator of values in the input files
 
-StardustPermutation(group="docker",scratch.folder = scratch.folder,
-file=file, tissuePosition=tissuePosition, spaceWeight=0.75, nPerm=80, permAtTime=8, percent=10, separator="\t")
+StardustPermutation(group="docker", scratch.folder=scratch.folder, file=file, tissuePosition=tissuePosition, spaceWeight=0.75, res=0.8, nPerm=80, permAtTime=8,percent=10, pcaDimensions=10, separator="\t")
 
 # extract the number of clusters obtained in order to configure the next method call
 cluster.path <- paste(data.folder=dirname(file), "Results", strsplit(basename(file),"\\.")[[1]][1], sep="/")
@@ -262,6 +261,80 @@ cluster <- as.numeric(list.dirs(cluster.path, full.names = FALSE, recursive = FA
 # separator → character separator of values in the input files
 # sp → minimum number of percentage of cells that has to be in common between two 
 #      permutation to be the same cluster.
-permAnalysisSeurat(group="docker",scratch.folder = scratch.folder,file=file, nCluster=cluster,separator="\t",sp=0.8)
+
+permAnalysisSeurat(group="docker", scratch.folder = scratch.folder, file=file, nCluster=cluster, separator="\t", sp=0.8)
 ``` 
-In “Results/filtered_expression_matrix/10/filtered_expression_matrix_clustering.output.txt” file, you will find the assigned cluster identity of each spot, and in “Results/filtered_expression_matrix/10/filtered_expression_matrix_scoreSum.txt” file its stability score for the configuration used (spaceWeight=0.75).
+In “Results/filtered_expression_matrix/9/filtered_expression_matrix_clustering.output.txt” file, you will find the assigned cluster identity of each spot, and in “Results/filtered_expression_matrix/9/filtered_expression_matrix_scoreSum.txt” file its stability score for the configuration used (spaceWeight=0.75).
+
+The coefficient of variation value can be computed from the "filtered_expression_matrix_scoreSum.txt” file as following. 
+
+# start R
+R
+```R
+# R code
+# Read the stability scores and compute the coefficient of variation
+mat <- read.table("filtered_expression_matrix_scoreSum.txt")
+cv <- sd(mat$V2)/mean(mat$V2)
+cv
+``` 
+
+The dind_rcasc container comprises the permutation functions for all the other methods compared. Note that each method requires specific input data that must be prepared in advance, see https://github.com/InfOmics/Stardust_rCASC/tree/master/Tools_Comparison/homes for more details. 
+
+# start R
+R
+```R
+# R code
+
+# For BayesSpace use
+bayeSpacePermutation(group="docker", scratch.folder=scratch.folder, file=file filtered_feature_bc_matrix=filtered_feature_bc_matrix, n_clusters=n_clusters, spatial=spatial,nPerm=80, permAtTime=8)
+
+# For Giotto use
+GiottoPermutation(group="docker", scratch.folder=scratch.folder, file=file, h5matrix.name=h5matrix.name, spotpositions.name=spotpositions.name, n_clusters=n_clusters, pcaDimensions=pcaDimensions, nPerm=80, permAtTime=8, percent=10)
+
+# For spaGCN use
+spaGCNPermutation(group="docker", scratch.folder=scratch.folder, h5matrix.name=h5matrix.name, spotpositions.name=spotpositions.name, image.name=image.name, use_histology=TRUE, lResolution=lResolution, pcaDimensions=pcaDimensions, nPerm=80, permAtTime=8)
+
+# For stLearn use
+STLearnPermutation(group="docker", scratch.folder=scratch.folder,file=file, filtered_feature_bc_matrix=filtered_feature_bc_matrix, lResolution=res, nPerm=80, permAtTime=8,percent=10, pcaDimensions=pcaDimensions)
+
+# For each method, extract the number of clusters obtained in order to configure the next method call
+cluster.path <- paste(data.folder=dirname(file), "Results", strsplit(basename(file),"\\.")[[1]][1], sep="/")
+cluster <- as.numeric(list.dirs(cluster.path, full.names=FALSE, recursive=FALSE))
+
+# call permAnalysisSeurat in order to compute the stability scores based on the 
+# previous permutations. The parameters meaning are:
+# group → to create the docker image without superuser privileges
+# scratch.folder → path of the folder that rCASC use for storing temporary files
+# file → path of the count matrix file
+# nCluster → number of cluster obtained before
+# separator → character separator of values in the input files
+# sp → minimum number of percentage of cells that has to be in common between two 
+#      permutation to be the same cluster.
+
+permAnalysisSeurat(group="docker", scratch.folder=scratch.folder, file=file, nCluster=cluster, separator="\t", sp=0.8)
+``` 
+
+## Stardust tuning 
+From the Stardust_tuning directory, run the run_container.sh script to build the container image that implements the tuning.
+Navigate into the runExample directory and prepare a dedicated directory to download the desired dataset. 
+
+# Bash code
+# download the count matrix and spot positions for
+# the Mouse Kidney dataset (as an example)
+mkdir -p MouseKidney/scratch && cd MouseKidney
+
+wget https://github.com/InfOmics/stardust/validation_data/stardustData/Datasets/MouseKidney/filtered_expression_matrix.txt.zip
+
+wget https://github.com/InfOmics/stardust/validation_data/stardustData/Datasets/MouseKidney/spot_coordinates.txt
+
+# unzip the archive and delete unused data
+unzip filtered_expression_matrix.txt.zip
+rm -rf __MACOSX
+rm filtered_expression_matrix.txt.zip
+
+From the runExample directory execute the runTuning.R script passing as an argument the dataset's folder name.
+
+# Bash code
+Rscript runTuning.R MK
+
+In "Dataset/MK/results.txt", you will find the best space weight and resolution parameters returned. 
