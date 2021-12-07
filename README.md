@@ -280,7 +280,7 @@ The dind_rcasc container comprises the permutation functions for all the other m
 # R code
 
 # For BayesSpace use
-bayeSpacePermutation(group="docker", scratch.folder=scratch.folder, file=file filtered_feature_bc_matrix=filtered_feature_bc_matrix, 
+bayeSpacePermutation(group="docker", scratch.folder=scratch.folder, file=file, filtered_feature_bc_matrix=filtered_feature_bc_matrix, 
 n_clusters=n_clusters, spatial=spatial,nPerm=80, permAtTime=8)
 
 # For Giotto use
@@ -292,7 +292,7 @@ spaGCNPermutation(group="docker", scratch.folder=scratch.folder, h5matrix.name=h
 image.name=image.name, use_histology=TRUE, lResolution=lResolution, pcaDimensions=pcaDimensions, nPerm=80, permAtTime=8)
 
 # For stLearn use
-STLearnPermutation(group="docker", scratch.folder=scratch.folder,file=file, filtered_feature_bc_matrix=filtered_feature_bc_matrix, 
+STLearnPermutation(group="docker", scratch.folder=scratch.folder, file=file, filtered_feature_bc_matrix=filtered_feature_bc_matrix, 
 lResolution=res, nPerm=80, permAtTime=8,percent=10, pcaDimensions=pcaDimensions)
 
 # For each method, extract the number of clusters obtained in order to configure the next method call
