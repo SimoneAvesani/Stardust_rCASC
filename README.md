@@ -287,11 +287,22 @@ mat <- read.table("filtered_expression_matrix_scoreSum.txt")
 cv <- sd(mat$V2)/mean(mat$V2)
 cv
 ``` 
+For each compared method, a dedicated container implements the permutations. Note that each method requires specific input data that must be prepared in advance, see https://github.com/InfOmics/Stardust_rCASC/tree/master/Tools_Comparison/homes for more details. 
 
-The dind_rcasc container also implements the permutations of the other compared methods. Note that each method requires specific input data that must be prepared in advance, see https://github.com/InfOmics/Stardust_rCASC/tree/master/Tools_Comparison/homes for more details. 
+```bash
+# Bash code
+# pull the container for each method
+docker pull giovannics/bayespacepermutation
+docker pull giovannics/giottopermutation
+docker pull giovannics/spagcnpermutation
+docker pull giovannics/stlearn-rcasc 
+# start R
+R
+```
 
 ```R
 # R code
+library(rCASC) 
 
 # For BayesSpace use
 bayeSpacePermutation(group="docker", scratch.folder=scratch.folder, file=file, filtered_feature_bc_matrix=filtered_feature_bc_matrix, 
@@ -327,7 +338,7 @@ permAnalysisSeurat(group="docker", scratch.folder=scratch.folder, file=file, nCl
 ``` 
 
 ## Stardust tuning 
-From the Stardust_tuning directory, run the run_container.sh script to build the container image that implements the tuning.
+From the Stardust_tuning directory, run the run_container.sh script to build the Docker image.
 Navigate into the runExample directory and prepare a dedicated directory to download the desired datasets. 
 
 ```bash
