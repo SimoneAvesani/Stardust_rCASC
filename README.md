@@ -338,12 +338,13 @@ permAnalysisSeurat(group="docker", scratch.folder=scratch.folder, file=file, nCl
 ``` 
 
 ## Stardust tuning 
-Pull the dedicated container and execute the run_container.sh script.
-Navigate into the runExample directory and prepare a directory to download the desired datasets. 
+First, pull the docker image and run it. Then, navigate into the runExample directory and prepare a directory to download the desired datasets. 
 
 ```bash
 # Bash code
 docker pull repbioinfo/tunestardust
+docker run -it --privileged=true repbioinfo/tunestardust /bin/bash
+
 # download the count matrix and spot positions for
 # the Mouse Kidney dataset (as an example)
 mkdir -p Datasets/MK/scratch && cd Datasets/MK
