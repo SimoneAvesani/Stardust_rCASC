@@ -264,7 +264,7 @@ permAnalysisSeurat(group="docker", scratch.folder = scratch.folder, file=file, n
 ``` 
 In “Results/filtered_expression_matrix/9/filtered_expression_matrix_clustering.output.txt” file, you will find the assigned cluster identity of each spot, and in “Results/filtered_expression_matrix/9/filtered_expression_matrix_scoreSum.txt” file its stability score for the configuration used (spaceWeight=0.75).
 
-The coefficient of variation value can be computed from the "filtered_expression_matrix_scoreSum.txt” file as following. 
+The coefficient of variation value can be computed from the "filtered_expression_matrix_scoreSum.txt” file as follows. 
 
 ```R
 # R code
