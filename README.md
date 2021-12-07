@@ -189,9 +189,6 @@ library("ggplot2")
 ```
 When your dependencies are installed you can generate the violin plots comparison image. In this way you can explore which configuration works best for your dataset.
 
-# start R
-R
-```
 
 ```R
 # R code
@@ -217,8 +214,6 @@ file=file, tissuePosition=tissuePosition, nPerm=80, permAtTime=8, percent=10, se
 ```
 Under the “MouseKidney” folder you will see the figure produced and all the data used to create it. If you want to evaluate the stability of only one configuration (that is less computationally expensive) you can switch the StartdustConfigurations method call with the following one.
 
-# start R
-R
 ```R
 # R code
 # you need to have rCASC already installed, the containers and data in your current location of the file system as in the workflow above
@@ -268,8 +263,6 @@ In “Results/filtered_expression_matrix/9/filtered_expression_matrix_clustering
 
 The coefficient of variation value can be computed from the "filtered_expression_matrix_scoreSum.txt” file as following. 
 
-# start R
-R
 ```R
 # R code
 # Read the stability scores and compute the coefficient of variation
@@ -280,8 +273,6 @@ cv
 
 The dind_rcasc container comprises the permutation functions for all the other methods compared. Note that each method requires specific input data that must be prepared in advance, see https://github.com/InfOmics/Stardust_rCASC/tree/master/Tools_Comparison/homes for more details. 
 
-# start R
-R
 ```R
 # R code
 
@@ -291,7 +282,7 @@ bayeSpacePermutation(group="docker", scratch.folder=scratch.folder, file=file fi
 # For Giotto use
 GiottoPermutation(group="docker", scratch.folder=scratch.folder, file=file, h5matrix.name=h5matrix.name, spotpositions.name=spotpositions.name, n_clusters=n_clusters, pcaDimensions=pcaDimensions, nPerm=80, permAtTime=8, percent=10)
 
-# For spaGCN use
+# For SpaGCN use
 spaGCNPermutation(group="docker", scratch.folder=scratch.folder, h5matrix.name=h5matrix.name, spotpositions.name=spotpositions.name, image.name=image.name, use_histology=TRUE, lResolution=lResolution, pcaDimensions=pcaDimensions, nPerm=80, permAtTime=8)
 
 # For stLearn use
@@ -318,6 +309,7 @@ permAnalysisSeurat(group="docker", scratch.folder=scratch.folder, file=file, nCl
 From the Stardust_tuning directory, run the run_container.sh script to build the container image that implements the tuning.
 Navigate into the runExample directory and prepare a dedicated directory to download the desired dataset. 
 
+```bash
 # Bash code
 # download the count matrix and spot positions for
 # the Mouse Kidney dataset (as an example)
@@ -331,10 +323,11 @@ wget https://github.com/InfOmics/stardust/validation_data/stardustData/Datasets/
 unzip filtered_expression_matrix.txt.zip
 rm -rf __MACOSX
 rm filtered_expression_matrix.txt.zip
-
+``` 
 From the runExample directory execute the runTuning.R script passing as an argument the dataset's folder name.
 
+```bash
 # Bash code
 Rscript runTuning.R MK
-
+```
 In "Dataset/MK/results.txt", you will find the best space weight and resolution parameters returned. 
