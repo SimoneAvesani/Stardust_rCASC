@@ -209,19 +209,21 @@ tissuePosition <- paste(getwd(),"/spot_coordinates.txt",sep="")
 # percent → percentage of the input dataset to remove for each permutation
 # separator → character separator of values in the input files
 
-StartdustConfigurations(group="docker",scratch.folder=scratch.folder,
+StartdustConfigurations(group="docker", scratch.folder=scratch.folder,
 file=file, tissuePosition=tissuePosition, nPerm=80, permAtTime=8, percent=10, separator="\t")
 ```
 Under the “MouseKidney” folder you will see the figure produced and all the data used to create it. If you want to evaluate the stability of only one configuration (that is less computationally expensive) you can switch the StartdustConfigurations method call with the following one.
 
 ```R
 # R code
-# you need to have rCASC already installed, the containers and data in your current location of the file system as in the workflow above
+# you need to have rCASC already installed, the containers and data in your current location 
+# of the file system as in the workflow above
 
 # load rCASC
 library(rCASC)
 
-# set the variables that contain the paths for the temporary files folder of rCASC, the count matrix and the spot positions file
+# set the variables that contain the paths for the temporary files folder of rCASC, 
+the count matrix and the spot positions file
 scratch.folder <- paste(getwd(),"/scratch",sep="")
 file <- paste(getwd(),"/filtered_expression_matrix.txt",sep="")
 tissuePosition <- paste(getwd(),"/spot_coordinates.txt",sep="")
@@ -241,7 +243,8 @@ tissuePosition <- paste(getwd(),"/spot_coordinates.txt",sep="")
 # pcaDimensions → number of principal components 
 # separator → character separator of values in the input files
 
-StardustPermutation(group="docker", scratch.folder=scratch.folder, file=file, tissuePosition=tissuePosition, spaceWeight=0.75, res=0.8, nPerm=80, permAtTime=8,percent=10, pcaDimensions=10, separator="\t")
+StardustPermutation(group="docker", scratch.folder=scratch.folder, file=file, tissuePosition=tissuePosition, spaceWeight=0.75, 
+res=0.8, nPerm=80, permAtTime=8,percent=10, pcaDimensions=10, separator="\t")
 
 # extract the number of clusters obtained in order to configure the next method call
 cluster.path <- paste(data.folder=dirname(file), "Results", strsplit(basename(file),"\\.")[[1]][1], sep="/")
@@ -277,16 +280,20 @@ The dind_rcasc container comprises the permutation functions for all the other m
 # R code
 
 # For BayesSpace use
-bayeSpacePermutation(group="docker", scratch.folder=scratch.folder, file=file filtered_feature_bc_matrix=filtered_feature_bc_matrix, n_clusters=n_clusters, spatial=spatial,nPerm=80, permAtTime=8)
+bayeSpacePermutation(group="docker", scratch.folder=scratch.folder, file=file filtered_feature_bc_matrix=filtered_feature_bc_matrix, 
+n_clusters=n_clusters, spatial=spatial,nPerm=80, permAtTime=8)
 
 # For Giotto use
-GiottoPermutation(group="docker", scratch.folder=scratch.folder, file=file, h5matrix.name=h5matrix.name, spotpositions.name=spotpositions.name, n_clusters=n_clusters, pcaDimensions=pcaDimensions, nPerm=80, permAtTime=8, percent=10)
+GiottoPermutation(group="docker", scratch.folder=scratch.folder, file=file, h5matrix.name=h5matrix.name, 
+spotpositions.name=spotpositions.name, n_clusters=n_clusters, pcaDimensions=pcaDimensions, nPerm=80, permAtTime=8, percent=10)
 
 # For SpaGCN use
-spaGCNPermutation(group="docker", scratch.folder=scratch.folder, h5matrix.name=h5matrix.name, spotpositions.name=spotpositions.name, image.name=image.name, use_histology=TRUE, lResolution=lResolution, pcaDimensions=pcaDimensions, nPerm=80, permAtTime=8)
+spaGCNPermutation(group="docker", scratch.folder=scratch.folder, h5matrix.name=h5matrix.name, spotpositions.name=spotpositions.name, 
+image.name=image.name, use_histology=TRUE, lResolution=lResolution, pcaDimensions=pcaDimensions, nPerm=80, permAtTime=8)
 
 # For stLearn use
-STLearnPermutation(group="docker", scratch.folder=scratch.folder,file=file, filtered_feature_bc_matrix=filtered_feature_bc_matrix, lResolution=res, nPerm=80, permAtTime=8,percent=10, pcaDimensions=pcaDimensions)
+STLearnPermutation(group="docker", scratch.folder=scratch.folder,file=file, filtered_feature_bc_matrix=filtered_feature_bc_matrix, 
+lResolution=res, nPerm=80, permAtTime=8,percent=10, pcaDimensions=pcaDimensions)
 
 # For each method, extract the number of clusters obtained in order to configure the next method call
 cluster.path <- paste(data.folder=dirname(file), "Results", strsplit(basename(file),"\\.")[[1]][1], sep="/")
