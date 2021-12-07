@@ -221,9 +221,8 @@ Under the “MouseKidney” folder you will see the figure produced and all the 
 
 ```bash
 # Bash code
-# pull the updated container that implements the permutations of Stardust and
-# of all the other compared methods and that also 
-# implements the stability scores computation
+# pull the updated container that implements the permutations of Stardust 
+# and the stability scores computation
 docker pull giovannics/dind_rcasc
 # start R
 R
@@ -289,7 +288,7 @@ cv <- sd(mat$V2)/mean(mat$V2)
 cv
 ``` 
 
-The dind_rcasc container comprises the permutation functions for all the other methods compared. Note that each method requires specific input data that must be prepared in advance, see https://github.com/InfOmics/Stardust_rCASC/tree/master/Tools_Comparison/homes for more details. 
+The dind_rcasc container also implements the permutations of the other compared methods. Note that each method requires specific input data that must be prepared in advance, see https://github.com/InfOmics/Stardust_rCASC/tree/master/Tools_Comparison/homes for more details. 
 
 ```R
 # R code
