@@ -317,13 +317,13 @@ permAnalysisSeurat(group="docker", scratch.folder=scratch.folder, file=file, nCl
 
 ## Stardust tuning 
 From the Stardust_tuning directory, run the run_container.sh script to build the container image that implements the tuning.
-Navigate into the runExample directory and prepare a dedicated directory to download the desired dataset. 
+Navigate into the runExample directory and prepare a dedicated directory to download the desired datasets. 
 
 ```bash
 # Bash code
 # download the count matrix and spot positions for
 # the Mouse Kidney dataset (as an example)
-mkdir -p MouseKidney/scratch && cd MouseKidney
+mkdir -p Datasets/MK/scratch && cd Datasets/MK
 
 wget https://github.com/InfOmics/stardust/validation_data/stardustData/Datasets/MouseKidney/filtered_expression_matrix.txt.zip
 
@@ -340,4 +340,4 @@ From the runExample directory execute the runTuning.R script passing as an argum
 # Bash code
 Rscript runTuning.R MK
 ```
-In "Dataset/MK/results.txt", you will find the best space weight and resolution parameters returned. 
+In "Datasets/MK/results.txt", you will find the best space weight and resolution parameters returned. 
