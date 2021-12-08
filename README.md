@@ -148,13 +148,16 @@ docker cp container_id:/MouseKidney/spatialClustersPlot.png .
 ```
 
 ## Stability scores computation with rCASC
-rCASC stability scores computation allows users to evaluate which Stardust configuration performs better on your particular dataset. rCASC is designed with a container architecture so that it can provide computational reproducibility across different machines. The package can be installed from our fork on GitHub and the required docker containers can be pulled from Docker Hub.
+rCASC stability scores computation allows users to evaluate which Stardust configuration performs better on your particular dataset. rCASC is designed with a container architecture so that it can provide computational reproducibility across different machines. The package can be installed from our fork on GitHub and the required docker images can be pulled from Docker Hub.
 
 ```bash
 # Bash code
-# pull the container that implements the permutations of Stardust 
-# and the stability scores computation
-docker pull giovannics/dind_rcasc
+# pull the image to run the permutations of Stardust 
+# on multiple permutated datasets
+docker pull giovannics/spatial2020seuratpermutation
+
+# pull the image to run the stability scores computation
+docker pull repbioinfo/seuratanalysis
 
 # prepare a dedicated directory and download the count matrix and spot positions for 
 # the Mouse Kidney dataset (as an example)
@@ -178,7 +181,13 @@ R
 # install our rCASC fork on GitHub through the R package devtools
 library(devtools)
 install_github("InfOmics/rCASC")
+
+# install ggplot that is a dependency for the figure generation
+install.packages("ggplot2")
+library("ggplot2")
 ```
+When your dependencies are installed you can generate the violin plot image. In this way you can explore which configuration works best for your dataset by varying the parameters. 
+
 If you want to evaluate the stability of one Stardust configuration you can call the StardustPermutation and the permAnalysisSeurat methods. 
 
 ```R
@@ -207,7 +216,7 @@ tissuePosition <- paste(getwd(),"/spot_coordinates.txt",sep="")
 # separator → character separator of values in the input files
 
 StardustPermutation(group="docker", scratch.folder=scratch.folder, file=file, tissuePosition=tissuePosition, spaceWeight=0.75, 
-res=0.8, nPerm=80, permAtTime=8,percent=10, pcaDimensions=10, separator="\t")
+res=0.8, nPerm=80, permAtTime=8, percent=10, pcaDimensions=10, separator="\t")
 
 # extract the number of clusters obtained in order to configure the next method call
 cluster.path <- paste(data.folder=dirname(file), "Results", strsplit(basename(file),"\\.")[[1]][1], sep="/")
@@ -227,13 +236,6 @@ permAnalysisSeurat(group="docker", scratch.folder = scratch.folder, file=file, n
 ``` 
 In “Results/filtered_expression_matrix/9/filtered_expression_matrix_clustering.output.txt” file, you will find the assigned cluster identity of each spot, and in “Results/filtered_expression_matrix/9/filtered_expression_matrix_scoreSum.txt” file its stability score for the configuration used (spaceWeight=0.75).
 
-```R
-# install ggplot that is a dependency for the figure generation
-install.packages("ggplot2")
-library("ggplot2")
-```
-When your dependencies are installed you can generate the violin plot image. In this way you can explore which configuration works best for your dataset by varying the parameters. 
-
 The coefficient of variation value can be computed from the "filtered_expression_matrix_scoreSum.txt” file as follows. 
 
 ```R
@@ -243,11 +245,11 @@ mat <- read.table("filtered_expression_matrix_scoreSum.txt")
 cv <- sd(mat$V2)/mean(mat$V2)
 cv
 ``` 
-For each compared method, a dedicated container implements the permutations. Note that each method requires specific input data that must be prepared in advance, see https://github.com/InfOmics/Stardust_rCASC/tree/master/Tools_Comparison/homes for more details. 
+For each compared method, a dedicated container image can be pulled to run the permutations. Note that each method requires specific input data that must be prepared in advance, see https://github.com/InfOmics/Stardust_rCASC/tree/master/Tools_Comparison/homes for more details. 
 
 ```bash
 # Bash code
-# pull the container for each method
+# pull the image for each method
 docker pull giovannics/bayespacepermutation
 docker pull giovannics/giottopermutation
 docker pull giovannics/spagcnpermutation
@@ -276,7 +278,8 @@ image.name=image.name, use_histology=TRUE, lResolution=lResolution, pcaDimension
 STLearnPermutation(group="docker", scratch.folder=scratch.folder, file=file, filtered_feature_bc_matrix=filtered_feature_bc_matrix, 
 lResolution=res, nPerm=80, permAtTime=8,percent=10, pcaDimensions=pcaDimensions)
 
-# For each method, extract the number of clusters obtained in order to configure the next method call
+# For each method, extract the number of clusters obtained in order to configure 
+# the next method call as in the workflow above
 cluster.path <- paste(data.folder=dirname(file), "Results", strsplit(basename(file),"\\.")[[1]][1], sep="/")
 cluster <- as.numeric(list.dirs(cluster.path, full.names=FALSE, recursive=FALSE))
 
