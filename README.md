@@ -153,11 +153,8 @@ rCASC stability scores computation allows users to evaluate which Stardust confi
 ```bash
 # Bash code
 # pull the container that implements the permutations of Stardust 
-# on multiple permutated datasets
-docker pull giovannics/spatial2020seuratpermutation
-
-# pull the container that implements the stability scores computation
-docker pull repbioinfo/seuratanalysis
+# and the stability scores computation
+docker pull giovannics/dind_rcasc
 
 # prepare a dedicated directory and download the count matrix and spot positions for 
 # the Mouse Kidney dataset (as an example)
@@ -179,56 +176,12 @@ R
 ```R
 # R code
 # install our rCASC fork on GitHub through the R package devtools
-install.packages("devtools")
 library(devtools)
 install_github("InfOmics/rCASC")
-library(rCASC)
-
-# install ggplot that is a dependency for the figure generation
-install.packages("ggplot2")
-library("ggplot2")
 ```
-When your dependencies are installed you can generate the violin plots comparison image. In this way you can explore which configuration works best for your dataset.
+If you want to evaluate the stability of one Stardust configuration you can call the StardustPermutation and the permAnalysisSeurat methods. 
 
 ```R
-# R code
-# set the variables that contain the paths for the temporary files folder of rCASC,
-# the count matrix and the spot positions file
-scratch.folder <- paste(getwd(),"/scratch",sep="")
-file <- paste(getwd(),"/filtered_expression_matrix.txt",sep="")
-tissuePosition <- paste(getwd(),"/spot_coordinates.txt",sep="")
-
-# call the rCASC method for generation of the violin plot comparison figure.
-# It repeats the clustering permutation for 5 space configurations of Stardust (0,0.25,0.5,0.75 and 1). 
-# The parameters meaning are:
-# group → to create the docker image without superuser privileges
-# scratch.folder → path of the folder that rCASC use for storing temporary files
-# file → path of the count matrix file
-# tissuePosition → path of the spot coordinates file
-# nPerm → number of permutations to be computed
-# permAtTime → number of permutation to compute in parallel
-# percent → percentage of the input dataset to remove for each permutation
-# separator → character separator of values in the input files
-
-StartdustConfigurations(group="docker", scratch.folder=scratch.folder,
-file=file, tissuePosition=tissuePosition, nPerm=80, permAtTime=8, percent=10, separator="\t")
-```
-Under the “MouseKidney” folder you will see the figure produced and all the data used to create it. If you want to evaluate the stability of only one configuration (that is less computationally expensive) you can switch the StartdustConfigurations method call with the following one.
-
-```bash
-# Bash code
-# pull the updated container that implements the permutations of Stardust 
-# and the stability scores computation
-docker pull giovannics/dind_rcasc
-# start R
-R
-```
-
-```R
-# R code
-# you need to have rCASC already installed, the containers and data in your current location 
-# of the file system as in the workflow above
-
 # load rCASC
 library(rCASC)
 
@@ -273,6 +226,13 @@ cluster <- as.numeric(list.dirs(cluster.path, full.names = FALSE, recursive = FA
 permAnalysisSeurat(group="docker", scratch.folder = scratch.folder, file=file, nCluster=cluster, separator="\t", sp=0.8)
 ``` 
 In “Results/filtered_expression_matrix/9/filtered_expression_matrix_clustering.output.txt” file, you will find the assigned cluster identity of each spot, and in “Results/filtered_expression_matrix/9/filtered_expression_matrix_scoreSum.txt” file its stability score for the configuration used (spaceWeight=0.75).
+
+```R
+# install ggplot that is a dependency for the figure generation
+install.packages("ggplot2")
+library("ggplot2")
+```
+When your dependencies are installed you can generate the violin plot image. In this way you can explore which configuration works best for your dataset by varying the parameters. 
 
 The coefficient of variation value can be computed from the "filtered_expression_matrix_scoreSum.txt” file as follows. 
 
