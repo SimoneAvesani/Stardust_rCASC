@@ -31,11 +31,9 @@ wget https://github.com/SimoneAvesani/Stardust_rCASC/raw/master/Datasets/MouseKi
 
 # unzip the archives and delete unused data
 unzip filtered_expression_matrix.txt.zip
+unzip FullDataset.zip
 rm -rf __MACOSX
 rm filtered_expression_matrix.txt.zip FullDataset.zip
-
-unzip FullDataset
-rm FullDataset.zip
 
 # start R
 R
@@ -94,11 +92,9 @@ wget https://github.com/SimoneAvesani/Stardust_rCASC/raw/master/Datasets/MouseKi
 
 # unzip the archives and delete unused data
 unzip filtered_expression_matrix.txt.zip
+unzip FullDataset.zip
 rm -rf __MACOSX
-rm filtered_expression_matrix.txt.zip 
-
-unzip FullDataset
-rm FullDataset.zip
+rm filtered_expression_matrix.txt.zip FullDataset.zip
 
 # start R
 R
